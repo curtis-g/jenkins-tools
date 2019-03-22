@@ -42,13 +42,10 @@ def call(String buildStatus = 'STARTED', String channel = '#deployments') {
   }
 
   JSONObject attachment = new JSONObject();
-  attachment.put('author',"jenkins");
-  attachment.put('title', title.toString());
-  attachment.put('title_link',title_link.toString());
-  attachment.put('text', subject.toString());
-  attachment.put('fallback', "fallback message");
-  attachment.put('color',colorCode);
-  attachment.put('mrkdwn_in', ["fields"])
+ 	attachment.put( 'author',      'Jenkins' )
+	attachment.put( 'author_link', 'https://build.cutisgriffiths.co.uk' )
+	attachment.put( 'title_link',  env.RUN_DISPLAY_URL )
+	attachment.put( 'title',       currentBuild.fullDisplayName.toString() )
   // JSONObject for branch
   JSONObject branch = new JSONObject();
   branch.put('title', 'Branch');
