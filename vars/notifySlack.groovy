@@ -46,7 +46,7 @@ def call(String buildStatus = 'STARTED', String channel = '#deployments') {
 	attachment.put( 'author_link', 'https://jenkins.tgvg.net' )
 	attachment.put( 'title_link',  env.RUN_DISPLAY_URL )
 	attachment.put( 'title',       currentBuild.fullDisplayName.toString() )
-	attachment.put('color', 'colorCode')
+	attachment.put('color',colorCode);
   // JSONObject for branch
   JSONObject branch = new JSONObject();
   branch.put('title', 'Branch');
