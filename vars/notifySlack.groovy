@@ -1,119 +1,71 @@
-import net.sf.json.JSONObject
-import net.sf.json.JSONArray
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import hudson.tasks.test.AbstractTestResultAction;
+import hudson.model.Actionable;
 
-def prop( key, value )
-{
-	JSONObject prop = new JSONObject()
+def call(String buildStatus = 'STARTED', String channel = '#deployments') {
 
-	prop.put( 'title', key )
-	prop.put( 'value', value )
-	prop.put( 'short', true )
+  // buildStatus of null means successfull
+  buildStatus = buildStatus ?: 'SUCCESSFUL'
+  channel = channel ?: '#deployments'
 
-	return prop
-}
 
-def call( params = null, param2 = null )
-{
-	if ( params == null )
-	{
-		params = [ 'message' : null ]
-	}
-	else if ( ! ( params instanceof Map ) )
-	{
-		if ( param2 instanceof Map )
-		{
-			param2.message = params
-			params = param2
-		}
-		else if ( params.length() < 20 )
-		{
-			params = [ 'stage': params ]
-		}
-		else
-		{
-			params = [ 'message': params ]
-		}
-	}
+  // Default values
+  def colorName = 'RED'
+  def colorCode = '#FF0000'
+  def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}] (<${env.RUN_DISPLAY_URL}|Open>) (<${env.RUN_CHANGES_DISPLAY_URL}|  Changes>)'"
+  def title = "${env.JOB_NAME} Build: ${env.BUILD_NUMBER}"
+  def title_link = "${env.RUN_DISPLAY_URL}"
+  def branchName = "${env.BRANCH_NAME}"
 
-	params.stage   = params.stage ?: env.STAGE_NAME
-	params.channel = params.channel ?: 'deployments'
+  def commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
+  def author = sh(returnStdout: true, script: "git --no-pager show -s --format='%an'").trim()
 
-	if ( ! params.color )
-	{
-		switch ( currentBuild.currentResult.toString() )
-		{
-			case 'SUCCESS':
-				params.color = 'good'
-				break
-			case 'UNSTABLE':
-				params.color = 'warning'
-				break
-			case 'FAILURE':
-				params.color = 'error'
-				break
-			default:
-				params.color = '#000000'
-		}
-	}
+  def message = sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
 
-	if ( ! params.status )
-	{
-		switch ( currentBuild.currentResult.toString() )
-		{
-			case 'SUCCESS':
-				params.status = 'Good'
-				break
-			case 'UNSTABLE':
-				params.status = 'Unstable'
-				break
-			case 'FAILURE':
-				params.status = 'Failure'
-				break
-			default:
-				params.status = 'Unknown'
-		}
-	}
+  // Override default values based on build status
+  if (buildStatus == 'STARTED') {
+    color = 'YELLOW'
+    colorCode = '#FFFF00'
+  } else if (buildStatus == 'SUCCESSFUL') {
+    color = 'GREEN'
+    colorCode = 'good'
+  } else if (buildStatus == 'UNSTABLE') {
+    color = 'YELLOW'
+    colorCode = 'warning'
+  } else {
+    color = 'RED'
+    colorCode = 'danger'
+  }
 
-	JSONObject attachment = new JSONObject()
-	JSONArray  props      = new JSONArray()
+  JSONObject attachment = new JSONObject();
+  attachment.put('author',"jenkins");
+  attachment.put('title', title.toString());
+  attachment.put('title_link',title_link.toString());
+  attachment.put('text', subject.toString());
+  attachment.put('fallback', "fallback message");
+  attachment.put('color',colorCode);
+  attachment.put('mrkdwn_in', ["fields"])
+  // JSONObject for branch
+  JSONObject branch = new JSONObject();
+  branch.put('title', 'Branch');
+  branch.put('value', branchName.toString());
+  branch.put('short', true);
+  // JSONObject for author
+  JSONObject commitAuthor = new JSONObject();
+  commitAuthor.put('title', 'Author');
+  commitAuthor.put('value', author.toString());
+  commitAuthor.put('short', true);
+  // JSONObject for branch
+  JSONObject commitMessage = new JSONObject();
+  commitMessage.put('title', 'Commit Message');
+  commitMessage.put('value', message.toString());
+  commitMessage.put('short', false);
+  JSONArray attachments = new JSONArray();
+  attachments.add(attachment);
+  println attachments.toString()
 
-	attachment.put( 'author',      'Jenkins' )
-	attachment.put( 'author_link', 'https://build.curtisgriffiths.co.uk' )
-	attachment.put( 'title_link',  env.RUN_DISPLAY_URL )
-	attachment.put( 'title',       currentBuild.fullDisplayName.toString() )
+  // Send notifications
+  slackSend (color: colorCode, message: subject, attachments: attachments.toString(), channel: channel)
 
-	attachment.put( 'color',  params.color )
-
-	if ( binding.hasVariable('scm') )
-	{
-		props.add( prop( 'Revision', scm.toString() ) )
-	}
-	else if ( binding.hasVariable('git') )
-	{
-		rev = git.GIT_COMMIT.substring(0, 6)
-		props.add( prop( 'Revision', git.GIT_LOCAL_BRANCH + '@' + rev ) )
-	}
-
-	if ( env.TAG_NAME )
-	{
-		props.add( prop( 'Tag', env.TAG_NAME ) )
-	}
-	else if ( env.BRANCH_NAME )
-	{
-		props.add( prop( 'Branch', env.BRANCH_NAME ) )
-	}
-
-	props.add( prop( 'Stage' , params.stage.toString() ) )
-	props.add( prop( 'Status', params.status ) )
-
-	attachment.put( 'fields', props )
-
-	JSONArray attachments = new JSONArray()
-	attachments.add( attachment )
-
-	// Send notifications
-	slackSend(
-		color: params.color, message: params.message,
-		attachments: attachments.toString(), channel: params.channel
-	)
 }
