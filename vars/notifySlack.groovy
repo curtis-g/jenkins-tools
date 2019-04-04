@@ -18,7 +18,7 @@ def call(String buildStatus = 'Deployment Started', String channel = '#deploymen
   def title_link = "${env.RUN_DISPLAY_URL}"
 
   // Override default values based on build status
-  if (buildStatus == 'STARTED') {
+  if (buildStatus == 'Deployment Started') {
     color = 'YELLOW'
     colorCode = '#FFFF00'
   } else if (buildStatus == 'Deployed to Test') {
@@ -27,7 +27,7 @@ def call(String buildStatus = 'Deployment Started', String channel = '#deploymen
   } else if (buildStatus == 'Deployed to Prod') {
     color = 'GREEN'
     colorCode = 'good'
-  } else if (buildStatus == 'Build Completed') {
+  } else if (buildStatus == 'Build Comple') {
     color = 'GREEN'
     colorCode = 'good'
   } else if (buildStatus == 'UNSTABLE') {
