@@ -19,7 +19,7 @@ def call(String buildStatus = 'Deployment Started', String channel = '#deploymen
   def build_status = "${buildStatus}"
 
   // Override default values based on build status
-  if (buildStatus == 'Deployment Started') {
+  if (buildStatus == 'STARTED') {
     color = 'YELLOW'
     colorCode = '#FFFF00'
   } else if (buildStatus == 'Deployed to Test') {
