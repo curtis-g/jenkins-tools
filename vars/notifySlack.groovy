@@ -40,7 +40,7 @@ def call(String buildStatus = 'STARTED', String channel = '#deployments') {
 	attachment.put( 'author_link', 'https://build.curtisgriffiths.co.uk' )
 	attachment.put( 'title_link',  env.RUN_DISPLAY_URL )
 	attachment.put( 'title',       'Status' )
-  attachment.put( 'text'), "${buildStatus}"
+  attachment.put( 'text'), '"${buildStatus}"'
 	attachment.put('color',colorCode)
 
   JSONArray attachments = new JSONArray();
