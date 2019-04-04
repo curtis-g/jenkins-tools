@@ -13,15 +13,9 @@ def call(String buildStatus = 'STARTED', String channel = '#deployments') {
   // Default values
   def colorName = 'RED'
   def colorCode = '#FF0000'
-  def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}] (<${env.RUN_DISPLAY_URL}|Open>) (<${env.RUN_CHANGES_DISPLAY_URL}|  Changes>)'"
+  def subject = currentBuild.fullDisplayName.toString()
   def title = "${env.JOB_NAME} Build: ${env.BUILD_NUMBER}"
   def title_link = "${env.RUN_DISPLAY_URL}"
-  def branchName = "${env.BRANCH_NAME}"
-
-  def commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
-  def author = sh(returnStdout: true, script: "git --no-pager show -s --format='%an'").trim()
-
-  def message = sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
 
   // Override default values based on build status
   if (buildStatus == 'STARTED') {
@@ -43,26 +37,12 @@ def call(String buildStatus = 'STARTED', String channel = '#deployments') {
 
   JSONObject attachment = new JSONObject();
  	attachment.put( 'author',      'Jenkins' )
-	attachment.put( 'author_link', 'https://jenkins.tgvg.net' )
+	attachment.put( 'author_link', 'https://build.curtisgriffiths.co.uk' )
 	attachment.put( 'title_link',  env.RUN_DISPLAY_URL )
-	attachment.put( 'title',       currentBuild.fullDisplayName.toString() )
-	attachment.put('value', 'hello')
+	attachment.put( 'title',       'Status' )
+  attachment.put( 'text'), "${buildStatus}"
 	attachment.put('color',colorCode)
-  // JSONObject for branch
-  JSONObject branch = new JSONObject();
-  branch.put('title', 'Branch');
-  branch.put('value', branchName.toString());
-  branch.put('short', true);
-  // JSONObject for author
-  JSONObject commitAuthor = new JSONObject();
-  commitAuthor.put('title', 'Author');
-  commitAuthor.put('value', author.toString());
-  commitAuthor.put('short', true);
-  // JSONObject for branch
-  JSONObject commitMessage = new JSONObject();
-  commitMessage.put('title', 'Commit Message');
-  commitMessage.put('value', message.toString());
-  commitMessage.put('short', false);
+
   JSONArray attachments = new JSONArray();
   attachments.add(attachment);
   println attachments.toString()
