@@ -16,7 +16,6 @@ def call(String buildStatus = 'Deployment Started', String channel = '#deploymen
   def subject = currentBuild.fullDisplayName.toString()
   def title = "${env.JOB_NAME} Build: ${env.BUILD_NUMBER}"
   def title_link = "${env.RUN_DISPLAY_URL}"
-  def build_status = "${buildStatus}"
 
   // Override default values based on build status
   if (buildStatus == 'STARTED') {
@@ -44,7 +43,7 @@ def call(String buildStatus = 'Deployment Started', String channel = '#deploymen
 	attachment.put( 'author_link', 'https://build.curtisgriffiths.co.uk' )
 	attachment.put( 'title_link',  env.RUN_DISPLAY_URL )
 	attachment.put( 'title',       'Status' )
-  attachment.put( 'text', build_status )
+  attachment.put( 'text', buildStatus )
 	attachment.put('color',colorCode)
 
   JSONArray attachments = new JSONArray();
