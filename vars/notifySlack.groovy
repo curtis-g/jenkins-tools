@@ -27,7 +27,7 @@ def call(String buildStatus = 'Deployment Started', String channel = '#deploymen
   } else if (buildStatus == 'Deployed to Prod') {
     color = 'GREEN'
     colorCode = 'good'
-  } else if (buildStatus == 'Build Comple') {
+  } else if (buildStatus == 'Build Complete') {
     color = 'GREEN'
     colorCode = 'good'
   } else if (buildStatus == 'UNSTABLE') {
