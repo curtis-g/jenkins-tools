@@ -3,8 +3,6 @@ import net.sf.json.JSONObject;
 import hudson.tasks.test.AbstractTestResultAction;
 import hudson.model.Actionable;
 
-def GIT_COMMIT = sh( script: 'git log -1 --pretty=%B', returnStdout: true )
-
 def prop( key, value )
 {
 	JSONObject prop = new JSONObject()
@@ -61,7 +59,7 @@ def call(String buildStatus = 'Deployment Started', String channel = '#deploymen
 	attachment.put( 'author_link', 'https://build.curtisgriffiths.co.uk' )
 	attachment.put( 'title_link',  env.RUN_DISPLAY_URL )
 	attachment.put( 'title',       env.JOB_URL )
-  attachment.put( 'text', "Commit: ${GIT_COMMIT}")
+  attachment.put( 'text', "Commit: ")
 	attachment.put('color',colorCode)
   attachment.put('mrkdwn_in', ['subject'])
   
