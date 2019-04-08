@@ -57,8 +57,7 @@ def call(String buildStatus = 'Deployment Started', String channel = '#deploymen
  	attachment.put( 'author',      'Jenkins' )
 	attachment.put( 'author_link', 'https://build.curtisgriffiths.co.uk' )
 	attachment.put( 'title_link',  env.RUN_DISPLAY_URL )
-	attachment.put( 'title',       'Status' )
-  attachment.put( 'text', buildStatus )
+	attachment.put( 'title',       env.BUILD_URL )
 	attachment.put('color',colorCode)
 
   props.add( prop('Status', buildStatus))
