@@ -59,7 +59,7 @@ def call(String buildStatus = 'Deployment Started', String channel = '#deploymen
 	attachment.put( 'author_link', 'https://build.curtisgriffiths.co.uk' )
 	attachment.put( 'title_link',  env.RUN_DISPLAY_URL )
 	attachment.put( 'title',       env.JOB_URL )
-  attachment.put( 'text', "Commit: ")
+  attachment.put( 'text', env.GIT_COMMIT)
 	attachment.put('color',colorCode)
   attachment.put('mrkdwn_in', ['subject'])
   
