@@ -24,7 +24,7 @@ def call(String buildStatus = 'Deployment Started', String channel = '#deploymen
   // Default values
   def colorName = 'RED'
   def colorCode = '#FF0000'
-  def subject = env.JOB_NAME.toString()
+  def subject = "*${env.JOB_NAME.toString()}*"
   def title = "${env.JOB_NAME} Build: ${env.BUILD_NUMBER}"
   def title_link = "${env.RUN_DISPLAY_URL}"
 
@@ -59,6 +59,7 @@ def call(String buildStatus = 'Deployment Started', String channel = '#deploymen
 	attachment.put( 'title_link',  env.RUN_DISPLAY_URL )
 	attachment.put( 'title',       env.JOB_URL )
 	attachment.put('color',colorCode)
+  attachment.put('mrkdwn_in', ['subject'])
 
   props.add( prop('Status', buildStatus))
   props.add( prop('Build Number', env.BUILD_NUMBER))
