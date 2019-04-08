@@ -14,11 +14,12 @@ def prop( key, value )
 	return prop
 }
 
-def call(String buildStatus = 'Deployment Started', String channel = '#deployments') {
+def call(String buildStatus = 'Deployment Started',String commit = 'No Commit', String channel = '#deployments') {
 
   // buildStatus of null means successfull
   buildStatus = buildStatus ?: 'UNSTABLE'
   channel = channel ?: '#deployments'
+  commit = commit ?: 'No Commit'
 
 
   // Default values
@@ -59,7 +60,7 @@ def call(String buildStatus = 'Deployment Started', String channel = '#deploymen
 	attachment.put( 'author_link', 'https://build.curtisgriffiths.co.uk' )
 	attachment.put( 'title_link',  env.RUN_DISPLAY_URL )
 	attachment.put( 'title',       env.JOB_URL )
-  attachment.put( 'text', "Commit: ${env.GIT_COMMIT}")
+  attachment.put( 'text', "Commit: ", commit)
 	attachment.put('color',colorCode)
   attachment.put('mrkdwn_in', ['subject'])
   
