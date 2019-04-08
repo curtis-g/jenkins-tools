@@ -24,7 +24,7 @@ def call(String buildStatus = 'Deployment Started', String channel = '#deploymen
   // Default values
   def colorName = 'RED'
   def colorCode = '#FF0000'
-  def subject = "*${env.JOB_NAME.toString()}*"
+  def subject = "Deployment of *${env.JOB_NAME.toString()}*"
   def title = "${env.JOB_NAME} Build: ${env.BUILD_NUMBER}"
   def title_link = "${env.RUN_DISPLAY_URL}"
 
