@@ -3,6 +3,17 @@ import net.sf.json.JSONObject;
 import hudson.tasks.test.AbstractTestResultAction;
 import hudson.model.Actionable;
 
+def prop( key, value )
+{
+	JSONObject prop = new JSONObject()
+
+	prop.put( 'title', key )
+	prop.put( 'value', value )
+	prop.put( 'short', true )
+
+	return prop
+}
+
 def call(String buildStatus = 'Deployment Started', String channel = '#deployments') {
 
   // buildStatus of null means successfull
@@ -13,7 +24,7 @@ def call(String buildStatus = 'Deployment Started', String channel = '#deploymen
   // Default values
   def colorName = 'RED'
   def colorCode = '#FF0000'
-  def subject = currentBuild.fullDisplayName.toString()
+  def subject = 'Deployment of' env.JOB_NAME.toString()
   def title = "${env.JOB_NAME} Build: ${env.BUILD_NUMBER}"
   def title_link = "${env.RUN_DISPLAY_URL}"
 
@@ -42,12 +53,18 @@ def call(String buildStatus = 'Deployment Started', String channel = '#deploymen
   }
 
   JSONObject attachment = new JSONObject();
+  JSONArray  props      = new JSONArray()
  	attachment.put( 'author',      'Jenkins' )
 	attachment.put( 'author_link', 'https://build.curtisgriffiths.co.uk' )
 	attachment.put( 'title_link',  env.RUN_DISPLAY_URL )
 	attachment.put( 'title',       'Status' )
   attachment.put( 'text', buildStatus )
 	attachment.put('color',colorCode)
+
+  props.add( prop('Status', buildStatus))
+  props.add( prop('Build Number', env.BUILD_NUMBER))
+
+  attachment.put( 'fields', props)
 
   JSONArray attachments = new JSONArray();
   attachments.add(attachment);
