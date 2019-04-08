@@ -3,6 +3,8 @@ import net.sf.json.JSONObject;
 import hudson.tasks.test.AbstractTestResultAction;
 import hudson.model.Actionable;
 
+GIT_COMMIT = sh( script: 'git log -1 --pretty=%B', returnStdout: true )
+
 def prop( key, value )
 {
 	JSONObject prop = new JSONObject()
