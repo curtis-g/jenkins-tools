@@ -55,16 +55,11 @@ def call(String buildStatus = 'Deployment Started', String channel = '#deploymen
   JSONObject attachment = new JSONObject();
   JSONArray  props      = new JSONArray()
 
-  if ( binding.hasVariable('git') )
-	  {
-		  rev = git.GIT_COMMIT
-    }
-
  	attachment.put( 'author',      'Jenkins' )
 	attachment.put( 'author_link', 'https://build.curtisgriffiths.co.uk' )
 	attachment.put( 'title_link',  env.RUN_DISPLAY_URL )
 	attachment.put( 'title',       env.JOB_URL )
-  attachment.put( 'text', "Commit: ${rev}")
+  attachment.put( 'text', "Commit: ")
 	attachment.put('color',colorCode)
   attachment.put('mrkdwn_in', ['subject'])
   
